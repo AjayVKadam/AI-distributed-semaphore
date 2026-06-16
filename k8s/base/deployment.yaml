@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: distributed-semaphore
+  labels:
+    app.kubernetes.io/name: distributed-semaphore
+    app.kubernetes.io/component: coordinator
+spec:
+  # Multiple pods per data center; all coordinate through the shared MongoDB.
+  replicas: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: distributed-semaphore
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: distributed-semaphore
+        app.kubernetes.io/component: coordinator
+    spec:
+      # Spread pods across zones/nodes so a single node failure cannot take the
+      # whole data center's replica set down at once.
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: distributed-semaphore
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: app
+          image: distributed-semaphore:latest
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            # Pod name becomes the lock owner identifier (see InstanceIdentity).
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            # Connection string for the globally shared MongoDB. Provided by the
+            # mongodb-credentials Secret; see secret.example.yaml.
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-credentials
+                  key: uri
+          # Lock tunables can be overridden via relaxed-binding env vars, e.g.
+          # DISTRIBUTED_LOCK_LEASE_DURATION. Defaults (15m / 3m / 15s) live in
+          # application.yaml.
+          envFrom:
+            - configMapRef:
+                name: distributed-semaphore-config
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "1"
+              memory: "768Mi"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          startupProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: http
+            failureThreshold: 30
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: http
+            periodSeconds: 10
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: http
+            periodSeconds: 15
+            failureThreshold: 3
+      # Allow in-flight work to finish; matches server.shutdown=graceful.
+      terminationGracePeriodSeconds: 45

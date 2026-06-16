@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: distributed-semaphore-config
+  labels:
+    app.kubernetes.io/name: distributed-semaphore
+data:
+  # Spring relaxed binding maps these to distributed-lock.* properties.
+  # Values shown are the defaults; override per data center in an overlay if needed.
+  DISTRIBUTED_LOCK_LEASE_DURATION: "15m"
+  DISTRIBUTED_LOCK_ACQUIRE_TIMEOUT: "3m"
+  DISTRIBUTED_LOCK_RETRY_INTERVAL: "15s"

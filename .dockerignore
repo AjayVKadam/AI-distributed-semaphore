@@ -1,0 +1,9 @@
+.git
+.gitignore
+build
+.gradle
+*.md
+docs
+k8s
+.idea
+*.iml

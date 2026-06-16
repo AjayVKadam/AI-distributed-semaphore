@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(java -version)",
+      "Bash(gradle -version)",
+      "Bash(git --version)",
+      "Bash(mkdir -p gradle/wrapper)",
+      "Bash(curl -sSL -o gradle/wrapper/gradle-wrapper.jar https://raw.githubusercontent.com/gradle/gradle/v8.14.3/gradle/wrapper/gradle-wrapper.jar)",
+      "Bash(curl -sS https://start.spring.io/metadata/client)",
+      "Bash(python -c \"import sys,json;d=json.load\\(sys.stdin\\);print\\('boot default/values:'\\);print\\(json.dumps\\(d['bootVersion'],indent=1\\)\\);print\\('java:',json.dumps\\(d['javaVersion']\\)\\)\")",
+      "Bash(curl -sSL -o starter.zip \"https://start.spring.io/starter.zip?type=gradle-project&language=java&bootVersion=4.1.0.RELEASE&javaVersion=25&groupId=com.example&artifactId=distributed-semaphore&name=distributed-semaphore&packageName=com.example.dlock&dependencies=web,data-mongodb,actuator,validation,configuration-processor\")",
+      "Bash(unzip -o -q starter.zip -d _starter)",
+      "Bash(curl -sSL -o build.gradle.gen \"https://start.spring.io/build.gradle?type=gradle-build&language=java&bootVersion=4.1.0.RELEASE&javaVersion=25&groupId=com.example&artifactId=distributed-semaphore&name=distributed-semaphore&packageName=com.example.dlock&dependencies=web,data-mongodb,validation\")",
+      "Bash(curl -sS -o /dev/null -w \"%{http_code}\\\\n\" https://repo1.maven.org/maven2/org/springframework/boot/spring-boot-dependencies/4.1.0/spring-boot-dependencies-4.1.0.pom)",
+      "Bash(curl -sS -o /dev/null -w \"%{http_code}\\\\n\" https://repo1.maven.org/maven2/org/springframework/boot/spring-boot-gradle-plugin/4.1.0/spring-boot-gradle-plugin-4.1.0.pom)",
+      "Bash(curl -sS -o /dev/null -w \"%{http_code}\\\\n\" https://plugins.gradle.org/m2/io/spring/gradle/dependency-management-plugin/1.1.7/dependency-management-plugin-1.1.7.pom)",
+      "Bash(curl -sSL -o gradlew https://raw.githubusercontent.com/gradle/gradle/v8.14.3/gradlew)",
+      "Bash(curl -sSL -o gradlew.bat https://raw.githubusercontent.com/gradle/gradle/v8.14.3/gradlew.bat)",
+      "Bash(rm -f starter.zip build.gradle.gen)",
+      "Bash(rm -rf _starter)",
+      "Bash(chmod +x gradlew)",
+      "Bash(./gradlew --no-daemon compileJava compileTestJava)",
+      "Bash(curl -sS -o /dev/null -w '%{http_code}' https://services.gradle.org/distributions/gradle-__TRACKED_VAR__-bin.zip)",
+      "Bash(curl -sS https://services.gradle.org/versions/current)",
+      "Bash(curl -sSL -o gradle/wrapper/gradle-wrapper.jar https://raw.githubusercontent.com/gradle/gradle/v9.5.1/gradle/wrapper/gradle-wrapper.jar)",
+      "Bash(curl -sSL -o gradlew https://raw.githubusercontent.com/gradle/gradle/v9.5.1/gradlew)",
+      "Bash(curl -sSL -o gradlew.bat https://raw.githubusercontent.com/gradle/gradle/v9.5.1/gradlew.bat)",
+      "Bash(curl -sS https://repo1.maven.org/maven2/org/springframework/boot/spring-boot-dependencies/4.1.0/spring-boot-dependencies-4.1.0.pom)",
+      "Bash(curl -sS https://repo1.maven.org/maven2/org/testcontainers/testcontainers-bom/2.0.5/testcontainers-bom-2.0.5.pom)",
+      "Bash(./gradlew --no-daemon compileTestJava)",
+      "Bash(./gradlew --no-daemon bootJar javadoc)",
+      "Bash(docker version *)",
+      "Bash(kubectl version *)",
+      "Bash(python -c ' *)"
+    ]
+  }
+}

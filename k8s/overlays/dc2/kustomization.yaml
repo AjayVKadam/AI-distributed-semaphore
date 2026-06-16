@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Data Center 2
+namespace: distributed-semaphore-dc2
+namePrefix: dc2-
+
+resources:
+  - ../../base
+
+labels:
+  - pairs:
+      topology.kubernetes.io/region: dc2
+    includeSelectors: false
+
+patches:
+  - path: deployment-patch.yaml

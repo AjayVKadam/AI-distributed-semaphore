@@ -1,0 +1,46 @@
+spring:
+  application:
+    name: distributed-semaphore
+  # Use one virtual thread per request / blocking task (Project Loom).
+  threads:
+    virtual:
+      enabled: true
+  data:
+    mongodb:
+      # Override via SPRING_DATA_MONGODB_URI in each Kubernetes data center.
+      uri: ${MONGODB_URI:mongodb://localhost:27017/distributed_locks}
+      auto-index-creation: false
+
+server:
+  port: 8080
+  shutdown: graceful
+
+# Tunables for the distributed lock / semaphore. Durations accept ISO-8601 or
+# Spring's shorthand (15m, 3m, 15s).
+distributed-lock:
+  # How long a single acquisition stays valid before it is considered expired.
+  lease-duration: 15m
+  # Maximum time a blocking acquire() will keep retrying before giving up.
+  acquire-timeout: 3m
+  # Delay between successive acquisition attempts while blocking.
+  retry-interval: 15s
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: when-authorized
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+
+logging:
+  level:
+    com.example.dlock: DEBUG

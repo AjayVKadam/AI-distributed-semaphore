@@ -1,0 +1,16 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: distributed-semaphore
+spec:
+  replicas: 3
+  template:
+    spec:
+      # Pin this deployment's pods to nodes in data center 4.
+      nodeSelector:
+        topology.kubernetes.io/region: dc4
+      containers:
+        - name: app
+          env:
+            - name: DATA_CENTER
+              value: "dc4"
